@@ -23,19 +23,7 @@ var prevFs = fs;
 var changeFlag=false;
 var biggestId=0;
 
-createFile("file3","blabla");
-
-printUnderCurFolder();
-changeFolder("folder1");
-printUnderCurFolder();
-changeFolder("root");
-printUnderCurFolder();
-changeFolder("folder1");
-deleteFilder ("file2");
-printUnderCurFolder();
-changeFolder("blabla")
-
-folderSearch(fileSystem[0],"file")
+promptQuestion ("");
 
 function getChildrenLength (currentFs){
   return currentFs.children.length;
@@ -85,28 +73,30 @@ function createFile (fileName,contentText){
   if (getType(fs)=="folder"){
     if (checkIfNameExist(fileName)){
       fs.children.push({id: getBiggestId() , name: fileName,content:contentText,type:"file"});
+      promptQuestion("");
     }
-    else { console.log("file name already exists");
+    else { console.log("file name already exists"); promptQuestion("");
     }
   }
-  else { console.log("Can't create file inside a file");
+  else { console.log("Can't create file inside a file"); promptQuestion("");
   }
 }
 
 function createFolder (folderName){
   if (getType(fs)=="folder"){
-    if (checkIfNameExist(fileName)){
+    if (checkIfNameExist(folderName)){
       fs.children.push({id: getBiggestId() , name: folderName,children: [],type:"folder"});
+      promptQuestion("");
     }
-    else { console.log("folder name already exists");
+    else { console.log("folder name already exists"); promptQuestion("");
     }
   }
-  else { console.log("Can't create folder inside a file");
+  else { console.log("Can't create folder inside a file"); promptQuestion("");
   }
 }
 
 function printUnderCurFolder (){
-  if (fs.type=="folder"){
+  if (getType(fs)=="folder"){
     console.log(fs.name);
     for (var i=0;i<getChildrenLength(fs);i++){
       console.log("  ",fs.children[i].name);
@@ -116,22 +106,19 @@ function printUnderCurFolder (){
     console.log(fs.name);
   }
   promptQuestion ("");
-
 }
 
 function deleteFilder (fileToDelete){
-  if (fs.type=="folder"){
-    console.log(getChildrenLength(fs));
+  if (getType(fs)=="folder"){
     for (var i=0;i<getChildrenLength(fs);i++){
       if (fs.children[i].name==fileToDelete){
         fs.children.splice(i,1);
         i--;
-        console.log(getChildrenLength(fs));
         console.log("File was deleted");
         return true;
       }
     }
-    console.log("Cant find ",fileToDelete," under current folder");
+    console.log("Cant find",fileToDelete,"under current folder");
   }
   else {
     console.log("can only delete items under a folder");
@@ -143,17 +130,19 @@ function changeFolder (desFolder) {
   if (checkIfFather(fileSystem[0],desFolder)){
     return true;
   }
-  if (fs.type=="folder"){
+  if (getType(fs)=="folder"){
     for (var i=0;i<getChildrenLength(fs);i++){
       if (fs.children[i].name==desFolder){
         fs=fs.children[i];
         console.log("Moved to child folder");
+        changeFlag=true;
         return true;
       }
     }
   }
   if (changeFlag==false){
     console.log(desFolder, " Is not father nor children");
+    promptQuestion ("");
   }
 }
 
@@ -203,7 +192,8 @@ function checkIfStringContanin (string1,string2){
 }
 
 function goBackQuestion (name){
-  if (name=="GoBack") {
+  name = name.toUpperCase();
+  if (name=="GOBACK") {
     promptQuestion("");
   }
 }
@@ -218,14 +208,17 @@ function promptQuestion (lastAction) {
 
   if (lastAction=="") {
     console.log("To Change Current folder enter - Change");
-    console.log("To Create a File or a Folder enter - Create")
-    console.log("To Search a file or a folder Under Current folder enter - Search")
-    console.log("To Print the Current folder enter - Print")
-    console.log("To Open a File under your current Folder enter - Open")
-    console.log("To Print the Current folder and ALL it branches enter - PrintAll")
-    console.log("To Delete current Folder or File enter - Delete")
-    console.log("To Terminate current process enter - Quit")
+    console.log("To Create a File or a Folder enter - Create");
+    console.log("To Search a file or a folder Under Current folder enter - Search");
+    console.log("To Print the Current folder enter - Print");
+    console.log("To Open a File under your current Folder enter - Open");
+    console.log("To Print the Current folder and ALL it branches enter - PrintAll");
+    console.log("To Delete current Folder or File enter - Delete");
+    console.log("To Terminate current process enter - Quit");
+    console.log("");
+
     var action = readlineSync.question("Please enter your desired action:");
+    console.log("");
   }
   action = action.toUpperCase();
 
@@ -240,6 +233,7 @@ function promptQuestion (lastAction) {
       var change = readlineSync.question("To go back enter - GoBack\n Please Enter Target:");
       goBackQuestion(change);
       changeFolder (change);
+      promptQuestion ("");
     break;
 
     case "CREATE":
@@ -263,10 +257,13 @@ function promptQuestion (lastAction) {
           break;
         }
         else if (Create=="FOLDER") {
-
-          var name = readlineSync.question("To go back enter - GoBack\n Please enter folder name");
+          var name = readlineSync.question("To go back enter - GoBack\n Please enter folder name: ");
+          if (name=="") {
+            console.log("Cant create nameless folder");
+            promptQuestion("Create");
+          }
           goBackQuestion(name);
-          createfolder (name);
+          createFolder (name);
           break;
         }
       console.log("Please select file or a folder");
@@ -275,9 +272,7 @@ function promptQuestion (lastAction) {
 
       case "SEARCH":
         var name = readlineSync.question("To go back enter - GoBack\n Please enter the requested file or folder name :  ");
-        if (name=="GoBack") {
-          promptQuestion("");
-        }
+        goBackQuestion(name);
         folderSearch (name);
       break;
 
@@ -294,7 +289,10 @@ function promptQuestion (lastAction) {
     break;
 
     case "DELETE":
-      fileDelete(curIndexFolder);
+      var name = readlineSync.question("To go back enter - GoBack\n Please enter the requested file or folder name :  ");
+      goBackQuestion(name);
+      deleteFilder(name);
+      promptQuestion ("");
     break;
 
     // case "PRINTALL":
