@@ -161,8 +161,8 @@ function changeFolder (desFolder) {
   else {
     console.log("Destination is not Father nor Son");
     promptQuestion ("Change");
+  }
 }
-
 function ifExist(fileName) {
   for (var i=0;i<fileSystem.length;i++) {
     if (fileSystem[i][2]==fileName) {

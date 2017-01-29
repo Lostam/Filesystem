@@ -1,7 +1,6 @@
 {
-  "name": "filesystem",
+  "name": "Filesystem",
   "version": "1.0.0",
-  "description": "",
   "main": "folder.js",
   "dependencies": {
     "ls": "^0.2.1",
@@ -10,8 +9,17 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node foldernew"
+    "start": "node folder.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lostam/Filesystem.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lostam/Filesystem/issues"
+  },
+  "homepage": "https://github.com/Lostam/Filesystem#readme",
+  "description": ""
 }
